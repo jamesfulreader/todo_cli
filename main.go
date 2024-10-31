@@ -1,7 +1,7 @@
 package main
 
 import (
-	"flag"
+	"bufio"
 	"fmt"
 	"os"
 	"time"
@@ -21,14 +21,14 @@ func showMenu() {
 	fmt.Println("enter 1 to add")
 	fmt.Println("enter 2 to list out the current tasks")
 	fmt.Println("enter 3 to complete a task")
-	fmt.Println("enter 4 to delete a task")
+	fmt.Println("enter 4 to delete a task\n")
 }
 
 func main() {
 	showMenu()
 
 	var choice int
-	fmt.Println("Enter your choice: ")
+	fmt.Print("Enter your choice: ")
 	fmt.Scan(&choice)
 
 	switch choice {
@@ -47,9 +47,16 @@ func main() {
 }
 
 func addTask() {
-	description := flag.String("description", "Please enter a description", "task description")
-	flag.Parse()
-	fmt.Println("add task:", *description)
+	fmt.Print("\n")
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Enter task description: ")
+	description, _ := reader.ReadString('\n')
+	fmt.Print("Enter due date (YYYY-MM-DD): ")
+	dueDateString, _ := reader.ReadString('\n')
+	dueDate, _ := time.Parse("2006-01-02", dueDateString[:len(dueDateString)-1])
+
+	fmt.Printf(description)
+	fmt.Printf(dueDate.String())
 }
 
 func listTasks() {
