@@ -18,7 +18,6 @@ type Task struct {
 }
 
 func showMenu() {
-	fmt.Println("Welcome the the todo list app CLI")
 	fmt.Println("Please select a number based on what you would like to do")
 	fmt.Println("enter 1 to add a task")
 	fmt.Println("enter 2 to list out the current tasks")
@@ -209,6 +208,7 @@ func deleteTask() {
 }
 
 func main() {
+	fmt.Println("Welcome the the todo list app CLI")
 	for {
 		showMenu()
 
