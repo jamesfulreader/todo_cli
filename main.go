@@ -91,11 +91,71 @@ func addTask() {
 }
 
 func listTasks() {
-	fmt.Println("Print tasks")
+	tasks, err := readTasksFromFile()
+	if err != nil {
+		fmt.Println("error reading tasks: ", err)
+	}
+
+	if len(tasks) == 0 {
+		fmt.Println("no tasks found")
+	}
+
+	for _, task := range tasks {
+		status := "pending"
+		if task.Completed {
+			status = "completed"
+		}
+		fmt.Printf("ID: %d | Description: %s | Due Date: %s | Status: %s\n", task.ID, task.Description[:len(task.Description)-1], task.DueAt.Format("2006-01-02"), status)
+	}
 }
 
 func markComplete() {
-	fmt.Println("Mark Complete")
+	listTasks()
+	var choice int
+	fmt.Print("\nWhich task would you like to complete? Please enter its ID number: ")
+	fmt.Scan(&choice)
+
+	tasks, err := readTasksFromFile()
+	if err != nil {
+		fmt.Println("error reading tasks: ", err)
+	}
+
+	found := false
+	for i, task := range tasks {
+		if task.ID == choice {
+			tasks[i].Completed = true
+			found = true
+			break
+		}
+	}
+	if !found {
+		fmt.Println("Task not found")
+		return
+	}
+
+	file, err := os.Create("tasks.csv")
+	if err != nil {
+		fmt.Println("error opening file:", err)
+		return
+	}
+	defer file.Close()
+
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+	for _, task := range tasks {
+		err := writer.Write([]string{
+			strconv.Itoa(task.ID),
+			task.Description,
+			strconv.FormatBool(task.Completed),
+			task.CreatedAt.Format("2006-01-02"),
+			task.DueAt.Format("2006-01-02"),
+		})
+		if err != nil {
+			fmt.Println("error writing to CSV:", err)
+			return
+		}
+	}
 }
 
 func deleteTask() {
