@@ -24,6 +24,7 @@ func showMenu() {
 	fmt.Println("enter 2 to list out the current tasks")
 	fmt.Println("enter 3 to complete a task")
 	fmt.Println("enter 4 to delete a task")
+	fmt.Println("enter 0 to exit")
 }
 
 func generateNextID() int {
@@ -208,23 +209,28 @@ func deleteTask() {
 }
 
 func main() {
-	showMenu()
+	for {
+		showMenu()
 
-	var choice int
-	fmt.Print("\nEnter your choice: ")
-	fmt.Scan(&choice)
+		var choice int
+		fmt.Print("\nEnter your choice: ")
+		fmt.Scan(&choice)
 
-	switch choice {
-	case 1:
-		addTask()
-	case 2:
-		listTasks()
-	case 3:
-		markComplete()
-	case 4:
-		deleteTask()
-	default:
-		fmt.Println("expected a number 1 - 4")
-		os.Exit(1)
+		switch choice {
+		case 0:
+			fmt.Println("Exiting . . .")
+			return
+		case 1:
+			addTask()
+		case 2:
+			listTasks()
+		case 3:
+			markComplete()
+		case 4:
+			deleteTask()
+		default:
+			fmt.Println("expected a number 1 - 4")
+			os.Exit(1)
+		}
 	}
 }
