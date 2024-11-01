@@ -159,7 +159,52 @@ func markComplete() {
 }
 
 func deleteTask() {
-	fmt.Println("Delete Task")
+	listTasks()
+	var choice int
+	fmt.Print("\nWhich task would you like to delete? Please enter its ID number: ")
+	fmt.Scan(&choice)
+
+	tasks, err := readTasksFromFile()
+	if err != nil {
+		fmt.Println("error reading tasks: ", err)
+	}
+
+	found := false
+	for i, task := range tasks {
+		if task.ID == choice {
+			tasks = append(tasks[:i], tasks[i+1:]...)
+			found = true
+			break
+		}
+	}
+	if !found {
+		fmt.Println("Task not found")
+		return
+	}
+
+	file, err := os.Create("tasks.csv")
+	if err != nil {
+		fmt.Println("error opening file:", err)
+		return
+	}
+	defer file.Close()
+
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+	for _, task := range tasks {
+		err := writer.Write([]string{
+			strconv.Itoa(task.ID),
+			task.Description,
+			strconv.FormatBool(task.Completed),
+			task.CreatedAt.Format("2006-01-02"),
+			task.DueAt.Format("2006-01-02"),
+		})
+		if err != nil {
+			fmt.Println("error writing to CSV:", err)
+			return
+		}
+	}
 }
 
 func main() {
