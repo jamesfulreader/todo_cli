@@ -13,7 +13,7 @@ This is a simple command-line to-do list application written in Go. It allows yo
 
 1.  Clone the repository:
     ```bash
-    git clone [invalid URL removed]
+    git clone
     ```
 
 2.  Navigate to the project directory:
