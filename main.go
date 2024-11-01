@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/csv"
 	"fmt"
-	"math/rand/v2"
 	"os"
 	"strconv"
 	"time"
@@ -25,6 +24,36 @@ func showMenu() {
 	fmt.Println("enter 2 to list out the current tasks")
 	fmt.Println("enter 3 to complete a task")
 	fmt.Println("enter 4 to delete a task")
+}
+
+func generateNextID() int {
+	tasks, _ := readTasksFromFile()
+	if len(tasks) == 0 {
+		return 1
+	}
+	return tasks[len(tasks)-1].ID + 1
+}
+
+func readTasksFromFile() ([]Task, error) {
+	file, _ := os.Open("tasks.csv")
+	defer file.Close()
+	reader := csv.NewReader(file)
+	lines, _ := reader.ReadAll()
+	var tasks []Task
+	for _, line := range lines {
+		id, _ := strconv.Atoi(line[0])
+		completed, _ := strconv.ParseBool(line[2])
+		createdAt, _ := time.Parse("2006-01-02", line[3])
+		dueAt, _ := time.Parse("2006-01-02", line[4])
+		tasks = append(tasks, Task{
+			ID:          id,
+			Description: line[1],
+			Completed:   completed,
+			CreatedAt:   createdAt,
+			DueAt:       dueAt,
+		})
+	}
+	return tasks, nil
 }
 
 func writeTaskToFile(task Task) {
@@ -50,10 +79,8 @@ func addTask() {
 	dueDateString, _ := reader.ReadString('\n')
 	dueDate, _ := time.Parse("2006-01-02", dueDateString[:len(dueDateString)-1])
 
-	simpleID := rand.IntN(100)
-
 	newTask := Task{
-		ID:          simpleID,
+		ID:          generateNextID(),
 		Description: description,
 		Completed:   false,
 		CreatedAt:   time.Now(),
