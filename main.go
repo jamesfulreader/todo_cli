@@ -229,7 +229,7 @@ func main() {
 		case 4:
 			deleteTask()
 		default:
-			fmt.Println("expected a number 1 - 4")
+			fmt.Println("expected a number on the menu")
 			os.Exit(1)
 		}
 	}
